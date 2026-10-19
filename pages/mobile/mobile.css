@@ -1,0 +1,532 @@
+/* pages/mobile/mobile.wxss */
+.container {
+  padding: 0;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+.page {
+  padding: 10px;
+}
+
+.page.hidden {
+  display: none;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.header-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.header-subtitle {
+  display: block;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.stat-section {
+  text-align: center;
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+  display: block;
+  font-size: 30px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.content-section {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #34495e;
+  text-align: center;
+  margin-bottom: 12.5px;
+}
+
+.group-selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.group-btn {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.group-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 7.5px rgba(0, 0, 0, 0.15);
+}
+
+.group-btn.completed {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.group-icon {
+  display: block;
+  font-size: 40px;
+  margin-bottom: 7.5px;
+}
+
+.group-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.group-status {
+  display: block;
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.group-btn.completed .group-status {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.empty-requests {
+  text-align: center;
+  padding: 20px 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #95a5a6;
+}
+
+.request-item {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 7.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.request-info {
+  flex: 1;
+}
+
+.request-group {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 2.5px;
+}
+
+.request-time {
+  display: block;
+  font-size: 12px;
+  color: #95a5a6;
+}
+
+.request-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2.5px 7.5px;
+  border-radius: 10px;
+}
+
+.request-status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.refresh-buttons {
+  display: flex;
+  gap: 7.5px;
+  margin-top: 10px;
+}
+
+.refresh-buttons .btn {
+  flex: 1;
+  margin: 0;
+}
+
+.info-note {
+  background-color: #fff3cd;
+  border-radius: 4px;
+  padding: 7.5px;
+  margin-top: 10px;
+}
+
+.note-text {
+  font-size: 12px;
+  color: #856404;
+  line-height: 1.5;
+}
+
+/* 评分页面样式 */
+.rating-container {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.scheme-info {
+  text-align: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.scheme-name {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: #34495e;
+  margin-bottom: 5px;
+}
+
+.scheme-desc {
+  display: block;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.dimensions-container {
+  margin-bottom: 15px;
+}
+
+.dimension-item {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.dimension-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.dimension-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.dimension-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.dimension-weight {
+  font-size: 12px;
+  color: #7f8c8d;
+  background-color: #ecf0f1;
+  padding: 2.5px 7.5px;
+  border-radius: 10px;
+}
+
+.score-slider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 7.5px;
+}
+
+.score-min, .score-max {
+  font-size: 12px;
+  color: #7f8c8d;
+  width: 20px;
+  text-align: center;
+}
+
+.slider {
+  flex: 1;
+}
+
+.score-description {
+  text-align: center;
+  font-size: 12px;
+  color: #95a5a6;
+}
+
+.total-score {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin: 15px 0;
+}
+
+.total-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #34495e;
+  margin-right: 10px;
+}
+
+.total-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.submit-btn {
+  width: 100%;
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+  padding: 10px;
+}
+
+.re-rate-btn {
+  width: 100%;
+  margin: 0;
+  font-size: 14px;
+  padding: 10px;
+}
+
+/* 评分结果预览样式 */
+.review-container {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.review-group {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.review-score {
+  display: block;
+  font-size: 30px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 15px;
+}
+
+.review-message {
+  display: block;
+  font-size: 16px;
+  color: #7f8c8d;
+  line-height: 1.5;
+}
+
+/* 提示消息样式 */
+.message {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 2px 7.5px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.message.active {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* 按钮样式 */
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.btn-primary {
+  background-color: #667eea;
+  color: white;
+}
+
+.btn-primary.disabled {
+  background-color: #ccc;
+  color: #999;
+}
+
+.btn-warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 375px) {
+  .group-selection {
+    grid-template-columns: 1fr;
+  }
+
+  .refresh-buttons {
+    flex-direction: column;
+  }
+
+  .score-slider {
+    gap: 5px;
+  }
+
+  .score-min, .score-max {
+    width: 15px;
+    font-size: 10px;
+  }
+}
+
+/* ===== 以下为网页版 HTML 适配样式（原页面未定义或需适配原生元素） ===== */
+
+/* 原生 button 还原成小程序按钮外观 */
+button.btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* 个人信息区（原样式未定义，此处补充） */
+.user-info {
+  text-align: left;
+}
+
+.user-info-item {
+  display: block;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.judge-name-input {
+  margin-top: 10px;
+}
+
+.input-label {
+  display: block;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.input-hint {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
+/* 评分滑块（对应原 slider 组件，show-value 用 .slider-value 展示） */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #e1e5ee;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+input[type="range"].slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: #667eea;
+  cursor: pointer;
+}
+
+.slider-value {
+  min-width: 28px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #667eea;
+}

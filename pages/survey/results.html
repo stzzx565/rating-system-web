@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>问卷统计 - 评分系统</title>
+<script>window.__ROOT__='../../';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="results.css">
+</head><body>
+<div class="page">
+  <div class="head">
+    <span class="head-title" id="headTitle"></span>
+    <span class="head-total" id="headTotal">共 0 份答卷</span>
+  </div>
+
+  <div class="empty" id="emptyBox" style="display:none;">
+    <span class="empty-emoji">📭</span>
+    <span class="empty-text">还没有收到答卷</span>
+  </div>
+
+  <!-- 各题统计卡片（动态渲染） -->
+  <div id="statList"></div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="results.js"></script>
+</body></html>

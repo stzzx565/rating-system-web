@@ -1,0 +1,299 @@
+/* pages/survey/list.wxss */
+.page {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding-bottom: 20px;
+}
+
+.header {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  padding: 25px 15px;
+  text-align: center;
+  color: white;
+}
+
+.header-emoji {
+  font-size: 45px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.header-title {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.header-sub {
+  display: block;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* 加载中 */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e3e8f0;
+  border-top-color: #0d9488;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: #888;
+  font-size: 14px;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 15px;
+}
+
+.empty-emoji {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.empty-sub {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 问卷卡片 */
+.survey-box {
+  padding: 12px 15px 0;
+}
+
+.survey-card {
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.card-main {
+  padding: 14px;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.status-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.status-tag.open {
+  background: #e6f7f0;
+  color: #0d9488;
+}
+
+.status-tag.closed {
+  background: #f0f0f0;
+  color: #999;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.card-meta {
+  display: flex;
+}
+
+.meta-item {
+  font-size: 11px;
+  color: #aaa;
+  margin-right: 15px;
+}
+
+.card-actions {
+  border-top: 0.5px solid #f0f0f0;
+  padding: 8px 14px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.action-btn {
+  font-size: 13px;
+  color: #0d9488;
+  padding: 4px 10px;
+}
+
+.share-btn {
+  font-size: 13px;
+  color: #fff;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  border-radius: 15px;
+  line-height: 28px;
+  padding: 0 13px;
+  margin-left: 8px;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+/* 按钮区 */
+.btn-area {
+  padding: 10px 15px 0;
+}
+
+.main-btn {
+  border-radius: 22px;
+  font-size: 15px;
+  line-height: 44px;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.main-btn::after {
+  border: none;
+}
+
+.admin-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+}
+
+.web-btn {
+  background: #fff;
+  color: #0d9488;
+  border: 0.5px solid #0d9488;
+}
+
+/* 密码对话框 */
+.password-dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-content {
+  width: 300px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-title {
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.dialog-desc {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.password-input {
+  border: 0.5px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+.dialog-actions {
+  display: flex;
+}
+
+.dialog-btn {
+  flex: 1;
+  font-size: 14px;
+  border-radius: 6px;
+  line-height: 38px;
+  padding: 0;
+  margin: 0 5px;
+}
+
+.dialog-btn.cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.dialog-btn.ok {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+}
+
+.dialog-btn::after {
+  border: none;
+}
+
+/* ===== 网页版 HTML 适配：原生控件与原效果对齐 ===== */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+  box-sizing: border-box;
+}
+
+/* 原小程序按钮默认通栏显示，网页版对齐该表现 */
+.main-btn {
+  display: block;
+  width: 100%;
+}
+
+input.password-input {
+  box-sizing: border-box;
+  outline: none;
+}

@@ -1,0 +1,278 @@
+/* pages/survey/fill.wxss */
+.page {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding-bottom: 30px;
+}
+
+/* 问卷头部 */
+.survey-head {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  padding: 20px 15px;
+  color: #fff;
+}
+
+.survey-title {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.survey-desc {
+  display: block;
+  font-size: 13px;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* 题目卡片 */
+.question-card {
+  background: #fff;
+  border-radius: 10px;
+  margin: 12px 15px 0;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.q-title-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.q-index {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d9488;
+  margin-right: 5px;
+}
+
+.q-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.q-required {
+  color: #e74c3c;
+  font-size: 16px;
+  margin-left: 3px;
+}
+
+.q-type-hint {
+  display: inline-block;
+  font-size: 10px;
+  color: #0d9488;
+  background: #e6f7f0;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: 6px 0 10px;
+}
+
+/* 选项 */
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.option-text {
+  font-size: 14px;
+  color: #333;
+  margin-left: 6px;
+}
+
+/* 文本输入 */
+.text-input {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.textarea-input {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 14px;
+  margin-top: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 60px;
+}
+
+/* 评分 */
+.rate-row {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.star {
+  font-size: 30px;
+  color: #ddd;
+  margin-right: 7px;
+}
+
+.star-on {
+  color: #f5b301;
+}
+
+.rate-num {
+  font-size: 13px;
+  color: #f5b301;
+  margin-left: 5px;
+  font-weight: 600;
+}
+
+/* 提交 */
+.submit-area {
+  padding: 20px 15px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 22px;
+  line-height: 46px;
+}
+
+.submit-btn.disabled {
+  opacity: 0.6;
+}
+
+.submit-btn::after {
+  border: none;
+}
+
+/* 成功视图 */
+.success-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.success-emoji {
+  font-size: 65px;
+  margin-bottom: 15px;
+}
+
+.success-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0d9488;
+  margin-bottom: 6px;
+}
+
+.success-sub {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+  font-size: 15px;
+  border-radius: 22px;
+  line-height: 44px;
+  padding: 0 40px;
+  margin-bottom: 12px;
+}
+
+.back-btn::after {
+  border: none;
+}
+
+.back-btn.ghost {
+  background: #fff;
+  color: #0d9488;
+  border: 0.5px solid #0d9488;
+}
+
+/* 异常状态（问卷不存在/已停止） */
+.status-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 90px;
+}
+
+.status-emoji {
+  font-size: 60px;
+  margin-bottom: 15px;
+}
+
+.status-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.status-sub {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 30px;
+}
+
+/* 分享提示 */
+.share-hint {
+  display: block;
+  font-size: 11px;
+  opacity: 0.85;
+  margin-top: 8px;
+}
+
+/* ===== 网页版 HTML 适配：原生控件与原效果对齐 ===== */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+  box-sizing: border-box;
+}
+
+/* 单行文本输入：原小程序输入控件默认通栏 */
+.text-input {
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.textarea-input {
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* 提交按钮通栏显示 */
+.submit-btn {
+  display: block;
+  width: 100%;
+}
+
+/* 单选/多选控件配色与原控件颜色一致 */
+.option-item input[type="radio"],
+.option-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: #0d9488;
+}
+
+/* 评分星星可点击 */
+.star {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}

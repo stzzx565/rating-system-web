@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>电脑版问卷系统 - 评分系统</title>
+<script>window.__ROOT__='../../';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="survey.css">
+</head><body>
+<div class="survey-container">
+  <!-- 正在检测服务器 -->
+  <div class="survey-status" id="loadingView">
+    <div class="spinner"></div>
+    <span class="status-text">正在连接问卷服务器...</span>
+  </div>
+
+  <!-- 服务器可达：内嵌问卷系统（原小程序内嵌组件在网页版用 iframe 承载） -->
+  <div class="webview-wrap" id="webviewWrap" style="display:none;">
+    <iframe id="webviewFrame" title="电脑版问卷系统"></iframe>
+  </div>
+
+  <!-- 服务器不可达：错误提示 -->
+  <div class="survey-status" id="errView" style="display:none;">
+    <span class="status-emoji">📋</span>
+    <span class="status-text">无法连接问卷服务器</span>
+    <div class="tips">
+      <span class="tip-line">1. 请确认电脑上的问卷系统已启动（运行 D:\TDuck\启动问卷系统.bat）</span>
+      <span class="tip-line">2. 手机需要和电脑连接同一个 Wi-Fi</span>
+      <span class="tip-line">3. 检查 app.js 中 TDUCK_BASE_URL 的地址配置</span>
+      <span class="tip-line">4. 开发者工具请勾选"不校验合法域名"</span>
+    </div>
+    <button class="retry-btn" onclick="onRetry()">重新连接</button>
+  </div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="survey.js"></script>
+</body></html>

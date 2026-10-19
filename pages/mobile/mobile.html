@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>评分 - 评分系统</title>
+<script>window.__ROOT__='../../'; window.__TABBAR__='mobile';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== 组选择页面 ===== -->
+  <div id="mobileGroupPage" class="page active">
+    <div class="page-header">
+      <span class="header-title">尊重：担当：创新：简单：共赢</span>
+      <span class="header-subtitle">请选择要评分的组别</span>
+    </div>
+
+    <div class="stat-section">
+      <span class="stat-value" id="statValue">0/0</span>
+      <span class="stat-label">已评分进度</span>
+    </div>
+
+    <div class="content-section">
+      <span class="section-title">📝 选择评分组</span>
+      <div class="group-selection" id="groupSelectionContainer"></div>
+    </div>
+
+    <div class="content-section">
+      <span class="section-title">🔄 我的重评请求</span>
+      <div id="myReRatingRequests"></div>
+    </div>
+
+    <div class="content-section">
+      <span class="section-title">👤 个人信息</span>
+      <div class="user-info">
+        <span class="user-info-item">当前用户：<span id="userNameText"></span></span>
+        <div class="judge-name-input" id="judgeNameInputWrap">
+          <span class="input-label">请输入您的姓名：</span>
+          <input
+            class="form-input"
+            id="judgeNameInput"
+            placeholder="请输入您的姓名"
+            oninput="onJudgeNameInput({detail:{value:this.value}})">
+          <span class="input-hint" id="judgeNameHint" style="display:none">评分已开始，姓名不可修改</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 评分页面 ===== -->
+  <div id="mobileRatingPage" class="page hidden">
+    <div class="page-header">
+      <span class="header-title" id="ratingHeaderTitle">评分</span>
+      <button class="btn btn-primary" onclick="showMobilePage('group')"><span>⬅️ 返回</span></button>
+    </div>
+
+    <div class="rating-container">
+      <!-- 评分方案信息 -->
+      <div class="scheme-info">
+        <span class="scheme-name" id="schemeName">默认评分方案</span>
+        <span class="scheme-desc">请为以下维度评分</span>
+      </div>
+
+      <!-- 评分维度（由 mobile.js 按评分方案动态渲染） -->
+      <div class="dimensions-container" id="dimensionsContainer"></div>
+
+      <!-- 总分 -->
+      <div class="total-score">
+        <span class="total-label">总分：</span>
+        <span id="totalScore" class="total-value">0</span>
+      </div>
+
+      <!-- 提交按钮 -->
+      <button id="submitBtn" class="btn btn-primary submit-btn" onclick="submitRating()">📤 提交评分</button>
+
+      <!-- 重评按钮 -->
+      <button id="reRateBtn" class="btn btn-warning re-rate-btn" onclick="requestReRating()">🔄 申请重评</button>
+    </div>
+  </div>
+
+  <!-- ===== 评分结果预览页面 ===== -->
+  <div id="mobileReviewPage" class="page hidden">
+    <div class="page-header">
+      <span class="header-title">评分结果</span>
+      <button class="btn btn-primary" onclick="showMobilePage('group')">返回</button>
+    </div>
+
+    <div class="review-container">
+      <span class="review-group" id="reviewGroup"></span>
+      <span class="review-score" id="reviewScore">您的评分：0</span>
+      <span class="review-message">评分已提交，感谢您的参与！</span>
+      <!-- 重评按钮 -->
+      <button class="btn btn-warning re-rate-btn" onclick="requestReRating()">🔄 申请重评</button>
+    </div>
+
+    <!-- 所有评分情况 -->
+    <div class="all-ratings-section">
+      <span class="section-title">📊 我的所有评分</span>
+      <div class="all-ratings-list" id="allRatingsList"></div>
+    </div>
+
+    <!-- 评分详情区域 -->
+    <div class="rating-details-section" id="ratingDetailsSection" style="display:none">
+      <span class="section-title">📋 评分详情</span>
+      <div class="details-group-name" id="detailsGroupName"></div>
+      <div class="dimension-scores" id="detailDimensions"></div>
+      <div class="total-score-section">
+        <span class="total-label">总分：</span>
+        <span class="total-value" id="detailsTotalValue">0分</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 提示消息 ===== -->
+  <div class="message" id="pageMessage"><span class="message-text" id="messageText"></span></div>
+
+</div>
+
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="mobile.js"></script>
+</body>
+</html>

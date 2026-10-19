@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>问卷管理 - 评分系统</title>
+<script>window.__ROOT__='../../';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="manage.css">
+</head><body>
+<div class="page">
+  <!-- 管理员验证 -->
+  <div class="verify-box" id="verifyBox">
+    <span class="verify-emoji">🔐</span>
+    <span class="verify-title">管理员验证</span>
+    <input class="verify-input" type="password" placeholder="请输入管理员密码"
+      id="verifyInput" oninput="onPasswordInput(event)">
+    <button class="verify-btn" onclick="verifyPassword()">确 认</button>
+  </div>
+
+  <div id="mainWrap" style="display:none;">
+    <!-- 列表视图 -->
+    <div id="listView">
+      <div class="list-head">
+        <span class="list-title">我的问卷</span>
+        <button class="create-btn" onclick="startCreate()">＋ 新建问卷</button>
+      </div>
+
+      <div class="empty" id="emptyBox">
+        <span class="empty-emoji">📭</span>
+        <span class="empty-text">还没有问卷，点击右上角"新建问卷"创建</span>
+      </div>
+
+      <div id="manageList"></div>
+    </div>
+
+    <!-- 新建问卷表单 -->
+    <div class="form-card" id="createView" style="display:none;">
+      <span class="form-title">新建问卷</span>
+      <span class="form-label">问卷标题 *</span>
+      <input class="form-input" placeholder="例如：2026年服务满意度调查"
+        id="newTitleInput" oninput="onNewTitle(event)">
+      <span class="form-label">问卷说明（可选）</span>
+      <textarea class="form-textarea" placeholder="简单说明问卷目的"
+        id="newDescInput" maxlength="200" oninput="onNewDesc(event)"></textarea>
+      <div class="form-actions">
+        <button class="form-btn cancel" onclick="cancelCreate()">取消</button>
+        <button class="form-btn ok" onclick="createSurvey()">创建并添加题目</button>
+      </div>
+    </div>
+
+    <!-- 编辑视图 -->
+    <div id="editView" style="display:none;">
+      <div class="form-card">
+        <span class="form-title">编辑问卷</span>
+        <span class="form-label">问卷标题</span>
+        <input class="form-input" id="editTitleInput" oninput="onEditTitle(event)">
+        <span class="form-label">问卷说明</span>
+        <textarea class="form-textarea" id="editDescInput" maxlength="200" oninput="onEditDesc(event)"></textarea>
+      </div>
+
+      <!-- 题目列表 -->
+      <div id="qList"></div>
+
+      <!-- 添加题目按钮 / 表单 -->
+      <button class="addq-btn" id="addqBtn" onclick="showQFormTap()">＋ 添加题目</button>
+
+      <div class="form-card" id="qForm" style="display:none;">
+        <span class="form-title">添加题目</span>
+        <span class="form-label">题目类型</span>
+        <select class="picker-value" id="typeSelect" onchange="onTypeChange(event)">
+          <option value="0">单选题</option>
+          <option value="1">多选题</option>
+          <option value="2">简答题</option>
+          <option value="3">问答题</option>
+          <option value="4">评分题</option>
+        </select>
+        <span class="form-label">题目内容 *</span>
+        <input class="form-input" placeholder="例如：您对我们的服务是否满意？"
+          id="qTitleInput" oninput="onQTitle(event)">
+        <div class="req-row">
+          <span class="form-label">必答题</span>
+          <input type="checkbox" class="switch-input" id="qRequiredSwitch" onchange="onQRequired(event)">
+        </div>
+
+        <!-- 单选/多选的选项编辑区 -->
+        <div id="optWrap">
+          <span class="form-label">选项（至少两个）</span>
+          <div id="optRows"></div>
+          <span class="opt-add" onclick="addOptionRow()">＋ 添加选项</span>
+        </div>
+
+        <div class="form-actions">
+          <button class="form-btn cancel" onclick="hideQForm()">取消</button>
+          <button class="form-btn ok" onclick="confirmAddQuestion()">确认添加</button>
+        </div>
+      </div>
+
+      <div class="form-actions save-area">
+        <button class="form-btn cancel" onclick="backToList()">返回列表</button>
+        <button class="form-btn ok" id="saveBtn" onclick="saveEdit()">保存到云端</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="manage.js"></script>
+</body></html>

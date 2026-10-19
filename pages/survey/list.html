@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>问卷调查 - 评分系统</title>
+<script>window.__ROOT__='../../';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="list.css">
+</head><body>
+<div class="page">
+  <div class="header">
+    <span class="header-emoji">📝</span>
+    <span class="header-title">问卷调查</span>
+    <span class="header-sub">数据云端同步，随时随地填写</span>
+  </div>
+
+  <!-- 加载中 -->
+  <div class="loading-box" id="loadingBox">
+    <div class="spinner"></div>
+    <span class="loading-text">正在加载问卷...</span>
+  </div>
+
+  <!-- 问卷列表 -->
+  <div class="survey-box" id="surveyBox" style="display:none;">
+    <div class="empty" id="emptyBox">
+      <span class="empty-emoji">📭</span>
+      <span class="empty-text">暂无问卷</span>
+      <span class="empty-sub" id="emptySub">管理员可点击下方"管理问卷"创建</span>
+    </div>
+    <div id="cardList"></div>
+  </div>
+
+  <!-- 功能按钮区 -->
+  <div class="btn-area">
+    <button class="main-btn admin-btn" id="adminBtn" onclick="goManage()">⚙️ 管理问卷（管理员）</button>
+    <button class="main-btn web-btn" onclick="goWebSurvey()">💻 电脑版完整问卷系统</button>
+  </div>
+</div>
+
+<!-- 密码输入对话框 -->
+<div class="password-dialog" id="pwdDialog" style="display:none;">
+  <div class="dialog-content">
+    <span class="dialog-title">管理员验证</span>
+    <span class="dialog-desc">请输入管理员密码以管理问卷</span>
+    <input class="password-input" type="password" placeholder="请输入密码"
+      id="pwdInput" oninput="onPasswordInput(event)">
+    <div class="dialog-actions">
+      <button class="dialog-btn cancel" onclick="cancelPasswordInput()">取消</button>
+      <button class="dialog-btn ok" onclick="verifyPassword()">确认</button>
+    </div>
+  </div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="list.js"></script>
+</body></html>

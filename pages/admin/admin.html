@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>管理 - 评分系统</title>
+<script>window.__ROOT__='../../'; window.__TABBAR__='admin';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="admin.css">
+</head><body>
+<div class="container">
+  <!-- 管理员登录验证 -->
+  <div id="authContainer" class="auth-container">
+    <div class="login-box">
+      <div class="login-image">
+        <img src="https://via.placeholder.com/200x150?text=管理端图片" alt="管理端图片">
+      </div>
+      <span class="login-title">管理员登录</span>
+      <span class="login-desc">请输入管理员密码</span>
+      <div class="password-input-container">
+        <input
+          id="passwordInput"
+          class="password-input"
+          type="password"
+          placeholder="请输入密码"
+          autofocus
+          oninput="onPasswordInput(this.value)"
+        >
+      </div>
+      <button class="btn btn-primary" onclick="verifyPassword()"><span>登录</span></button>
+    </div>
+  </div>
+
+  <!-- 管理页面内容，只有通过验证后才显示 -->
+  <div id="adminMain" style="display:none;">
+    <div class="header">
+      <span class="title">管理员控制台</span>
+      <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="results" onclick="switchTab('results')"><span>评分结果</span></div>
+        <div class="nav-tab" data-tab="schemes" onclick="switchTab('schemes')"><span>评分方案</span></div>
+        <div class="nav-tab" data-tab="groups" onclick="switchTab('groups')"><span>组别管理</span></div>
+        <div class="nav-tab" data-tab="requests" onclick="switchTab('requests')"><span>重评请求</span></div>
+        <div class="nav-tab" data-tab="history" onclick="switchTab('history')"><span>历史活动</span></div>
+        <div class="nav-tab" onclick="logout()"><span>退出</span></div>
+      </div>
+    </div>
+
+    <!-- 评分结果页面 -->
+    <div class="tab-content active" data-tab="results">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">评分结果</span>
+          <div class="card-actions">
+            <div class="scoring-method">
+              <span class="method-label">统计方法：</span>
+              <div class="method-buttons">
+                <div class="method-btn active" data-method="method1" onclick="switchScoringMethod('method1')"><span>平均分</span></div>
+                <div class="method-btn" data-method="method2" onclick="switchScoringMethod('method2')"><span>去掉最高/最低分</span></div>
+              </div>
+            </div>
+            <div class="require-judge-name-toggle">
+              <span class="toggle-label">评委姓名：</span>
+              <input id="requireJudgeNameSwitch" type="checkbox" class="toggle-switch" onchange="toggleRequireJudgeName(this.checked)">
+              <span class="toggle-text" id="requireJudgeNameText">启用</span>
+            </div>
+            <div class="require-judge-name-toggle">
+              <span class="toggle-label">查看详情：</span>
+              <input id="allowJudgeViewDetailsSwitch" type="checkbox" class="toggle-switch" onchange="toggleAllowJudgeViewDetails(this.checked)">
+              <span class="toggle-text" id="allowJudgeViewDetailsText">开放</span>
+            </div>
+            <button class="btn btn-primary" onclick="refreshResults()"><span>🔄 刷新</span></button>
+            <button class="btn btn-success" onclick="exportResults()"><span>📥 导出Excel</span></button>
+            <button class="btn btn-info" onclick="importResults()"><span>📤 导入Excel</span></button>
+            <button class="btn btn-info" onclick="saveActivity()"><span>💾 保存活动</span></button>
+            <button class="btn btn-info" onclick="generateStatsCharts()"><span>📊 生成多边形图表</span></button>
+            <button class="btn btn-warning" onclick="resetAllData()"><span>⚠️ 重置数据</span></button>
+          </div>
+        </div>
+
+        <div class="results-table">
+          <div class="table-header">
+            <div class="table-cell">组别</div>
+            <div class="table-cell">评委人数</div>
+            <div class="table-cell">平均分</div>
+            <div class="table-cell">最终得分</div>
+            <div class="table-cell">排名</div>
+          </div>
+          <div id="resultsTableBody"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">各组详细评分</span>
+        </div>
+        <div id="groupDetailsList"></div>
+      </div>
+    </div>
+
+    <!-- 评分方案页面 -->
+    <div class="tab-content hidden" data-tab="schemes">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">评分方案管理</span>
+          <div class="scheme-source-switcher">
+            <span class="source-label">当前来源：</span>
+            <div class="source-buttons">
+              <button id="sourceCloudBtn" class="btn btn-primary" onclick="switchSchemeSource('cloud')"><span>☁️ 云端</span></button>
+              <button id="sourceLocalBtn" class="btn btn-primary" onclick="switchSchemeSource('local')"><span>💾 本地</span></button>
+            </div>
+          </div>
+          <button class="btn btn-success" onclick="showSchemeEditorNew()"><span>📝 新建方案</span></button>
+          <button class="btn btn-info" onclick="importLocalScheme()"><span>📤 导入本地方案</span></button>
+        </div>
+
+        <div class="scheme-list" id="schemeList"></div>
+
+        <!-- 方案编辑器 -->
+        <div id="schemeEditor" class="scheme-editor hidden">
+          <div class="editor-header">
+            <span class="editor-title" id="editorTitle">编辑评分方案</span>
+            <button class="btn btn-danger" onclick="hideSchemeEditor()"><span>关闭</span></button>
+          </div>
+
+          <div class="form-item">
+            <span class="form-label">方案名称</span>
+            <input class="form-input" id="schemeName" placeholder="请输入方案名称" oninput="onSchemeInput('name', this.value)">
+          </div>
+
+          <div class="form-item">
+            <span class="form-label">方案描述</span>
+            <textarea class="form-input" id="schemeDescription" placeholder="请输入方案描述" oninput="onSchemeInput('description', this.value)"></textarea>
+          </div>
+
+          <div class="form-item">
+            <span class="form-label">总分</span>
+            <input class="form-input" type="number" id="totalScore" placeholder="请输入总分" oninput="onSchemeInput('totalScore', this.value)">
+          </div>
+
+          <div class="dimensions-list">
+            <span class="form-label">评分维度</span>
+            <div id="dimensionsList"></div>
+          </div>
+
+          <div class="editor-buttons">
+            <button class="btn btn-primary" onclick="addDimension()"><span>+ 添加评分维度</span></button>
+            <button class="btn btn-success" onclick="addFreeTextDimension()"><span>+ 添加自由文字框</span></button>
+          </div>
+
+          <div class="editor-actions">
+            <button class="btn btn-success" onclick="saveScheme()"><span>💾 保存方案</span></button>
+            <button class="btn btn-danger" onclick="hideSchemeEditor()"><span>取消</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 组别管理页面 -->
+    <div class="tab-content hidden" data-tab="groups">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">组别管理</span>
+          <button class="btn btn-success" onclick="addGroupName()"><span>+ 添加组别</span></button>
+        </div>
+
+        <div class="group-names-list" id="groupNamesList"></div>
+
+        <div class="group-name-input">
+          <input class="form-input" id="newGroupName" placeholder="请输入新组别名称" oninput="onNewGroupNameInput(this.value)">
+          <button class="btn btn-success" onclick="addGroupName()"><span>添加组别</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 重评请求页面 -->
+    <div class="tab-content hidden" data-tab="requests">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">重评请求</span>
+          <button class="btn btn-primary" onclick="refreshReRatingRequests()"><span>🔄 刷新</span></button>
+        </div>
+
+        <div class="requests-list" id="requestsList"></div>
+      </div>
+    </div>
+
+    <!-- 历史活动页面 -->
+    <div class="tab-content hidden" data-tab="history">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">历史评分活动</span>
+          <button class="btn btn-primary" onclick="refreshHistory()"><span>🔄 刷新</span></button>
+        </div>
+
+        <div class="history-activities-list" id="historyList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="admin.js"></script>
+</body></html>

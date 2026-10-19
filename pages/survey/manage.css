@@ -1,0 +1,416 @@
+/* pages/survey/manage.wxss */
+.page {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  padding-bottom: 30px;
+}
+
+/* 管理员验证 */
+.verify-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.verify-emoji {
+  font-size: 55px;
+  margin-bottom: 12px;
+}
+
+.verify-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.verify-input {
+  width: 280px;
+  border: 0.5px solid #ddd;
+  border-radius: 6px;
+  padding: 11px;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.verify-btn {
+  width: 280px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+  font-size: 15px;
+  border-radius: 22px;
+  line-height: 44px;
+}
+
+.verify-btn::after {
+  border: none;
+}
+
+/* 列表 */
+.list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.create-btn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+  font-size: 13px;
+  line-height: 32px;
+  padding: 0 15px;
+  border-radius: 16px;
+}
+
+.create-btn::after {
+  border: none;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 15px;
+}
+
+.empty-emoji {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 问卷卡片 */
+.survey-card {
+  background: #fff;
+  border-radius: 10px;
+  margin: 0 15px 12px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.status-tag {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.status-tag.open {
+  background: #e6f7f0;
+  color: #0d9488;
+}
+
+.status-tag.closed {
+  background: #f0f0f0;
+  color: #999;
+}
+
+.card-meta {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.meta-item {
+  font-size: 12px;
+  color: #999;
+  margin-right: 15px;
+}
+
+.card-actions {
+  display: flex;
+  border-top: 0.5px solid #f0f0f0;
+  padding-top: 10px;
+}
+
+.act-btn {
+  font-size: 13px;
+  padding: 5px 10px;
+  margin-right: 8px;
+  border-radius: 5px;
+  background: #f5f7fa;
+  color: #555;
+}
+
+.act-btn.primary {
+  color: #0d9488;
+  background: #e6f7f0;
+}
+
+.act-btn.danger {
+  color: #e74c3c;
+  background: #fdeaea;
+}
+
+/* 表单卡片 */
+.form-card {
+  background: #fff;
+  border-radius: 10px;
+  margin: 12px 15px 0;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.form-title {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  color: #666;
+  margin: 10px 0 5px;
+}
+
+.form-input {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 14px;
+}
+
+.form-textarea {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 50px;
+}
+
+.form-actions {
+  display: flex;
+  margin-top: 15px;
+}
+
+.save-area {
+  padding: 15px;
+}
+
+.form-btn {
+  flex: 1;
+  font-size: 14px;
+  border-radius: 6px;
+  line-height: 40px;
+  padding: 0;
+  margin: 0 5px;
+}
+
+.form-btn.cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.form-btn.ok {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0d9488 100%);
+  color: #fff;
+}
+
+.form-btn.ok.disabled {
+  opacity: 0.6;
+}
+
+.form-btn::after {
+  border: none;
+}
+
+/* 题目卡片 */
+.q-card {
+  background: #fff;
+  border-radius: 10px;
+  margin: 10px 15px 0;
+  padding: 13px;
+}
+
+.q-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.q-no {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.q-del {
+  color: #e74c3c;
+  font-size: 15px;
+  padding: 0 5px;
+}
+
+.q-info {
+  margin: 6px 0;
+}
+
+.q-tag {
+  font-size: 10px;
+  color: #0d9488;
+  background: #e6f7f0;
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-right: 6px;
+}
+
+.q-req {
+  font-size: 10px;
+  color: #999;
+}
+
+.q-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.q-opt {
+  font-size: 12.5px;
+  color: #666;
+  line-height: 1.9;
+}
+
+/* 添加题目 */
+.addq-btn {
+  margin: 12px 15px 0;
+  background: #fff;
+  color: #0d9488;
+  font-size: 15px;
+  border-radius: 10px;
+  line-height: 45px;
+  border: 1px dashed #0d9488;
+}
+
+.addq-btn::after {
+  border: none;
+}
+
+.picker-value {
+  border: 0.5px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.req-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.opt-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.opt-input {
+  flex: 1;
+}
+
+.opt-del {
+  color: #e74c3c;
+  font-size: 15px;
+  padding: 5px 8px;
+}
+
+.opt-add {
+  display: inline-block;
+  font-size: 13px;
+  color: #0d9488;
+  padding: 5px 0;
+}
+
+/* ===== 网页版 HTML 适配：原生控件与原效果对齐 ===== */
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  background: none;
+  box-sizing: border-box;
+}
+
+input.form-input,
+textarea.form-textarea,
+input.verify-input,
+select.picker-value {
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* 题目类型选择（对应原选择器控件） */
+select.picker-value {
+  display: block;
+  width: 100%;
+  background: #fff;
+  color: #333;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* 添加题目按钮通栏显示（左右各 15px 外边距已在原有样式中设置） */
+.addq-btn {
+  display: block;
+  width: calc(100% - 30px);
+}
+
+/* 必答题开关（对应原小程序开关组件，颜色 #0d9488） */
+.switch-input {
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+  width: 40px;
+  height: 22px;
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  background-color: #e5e5e5;
+  background-image: radial-gradient(circle at 11px 11px, #fff 7.5px, transparent 8px);
+  background-repeat: no-repeat;
+  background-position: 0 center;
+  transition: background-color 0.2s, background-position 0.2s;
+}
+
+.switch-input:checked {
+  background-color: #0d9488;
+  background-position: 18px center;
+}
+
+/* 可点击的删除/新增文字控件 */
+.q-del,
+.opt-del,
+.opt-add {
+  cursor: pointer;
+}

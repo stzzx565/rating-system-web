@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>问卷填写 - 评分系统</title>
+<script>window.__ROOT__='../../';</script>
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="fill.css">
+</head><body>
+<div class="page">
+  <!-- 问卷不存在/已删除 -->
+  <div class="status-box" id="missingBox" style="display:none;">
+    <span class="status-emoji">🔍</span>
+    <span class="status-title">问卷不存在或已被删除</span>
+    <button class="back-btn" onclick="backToList()">进入小程序</button>
+  </div>
+
+  <!-- 问卷已停止收集 -->
+  <div class="status-box" id="closedBox" style="display:none;">
+    <span class="status-emoji">⏸️</span>
+    <span class="status-title">该问卷已停止收集</span>
+    <span class="status-sub">感谢您的关注</span>
+    <button class="back-btn" onclick="backToList()">进入小程序</button>
+  </div>
+
+  <!-- 提交成功视图 -->
+  <div class="success-box" id="successBox" style="display:none;">
+    <span class="success-emoji">🎉</span>
+    <span class="success-title">提交成功！</span>
+    <span class="success-sub">感谢您的参与</span>
+    <button class="back-btn" onclick="backToList()">返回</button>
+  </div>
+
+  <!-- 已填写过（防重复提交） -->
+  <div class="status-box" id="alreadyBox" style="display:none;">
+    <span class="status-emoji">✅</span>
+    <span class="status-title">您已填写过这份问卷</span>
+    <span class="status-sub">感谢您的参与，无需重复填写</span>
+    <button class="back-btn" onclick="backToList()">返回</button>
+  </div>
+
+  <!-- 问卷填写视图 -->
+  <div id="mainView">
+    <div class="survey-head">
+      <span class="survey-title" id="surveyTitle"></span>
+      <span class="survey-desc" id="surveyDesc" style="display:none;"></span>
+    </div>
+
+    <!-- 题目卡片（按题目数据动态渲染） -->
+    <div id="questionList"></div>
+
+    <div class="submit-area">
+      <button class="submit-btn" id="submitBtn" onclick="submitSurvey()">提 交 问 卷</button>
+    </div>
+  </div>
+</div>
+<script src="../../js/wx-shim.js"></script>
+<script src="../../js/ui.js"></script>
+<script src="../../js/app.js"></script>
+<script src="fill.js"></script>
+</body></html>
