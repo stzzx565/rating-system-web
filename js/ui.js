@@ -9,6 +9,15 @@
   'use strict';
   var ROOT = (typeof window.__ROOT__ === 'string') ? window.__ROOT__ : './';
 
+  // ---------------- 站点图标（避免浏览器请求域名根 /favicon.ico 404） ----------------
+  (function () {
+    if (document.querySelector('link[rel~="icon"]')) return;
+    var lk = document.createElement('link');
+    lk.rel = 'icon';
+    lk.href = ROOT + 'favicon.ico';
+    document.head.appendChild(lk);
+  })();
+
   // ---------------- 顶部导航条（对应原生 navigationBar） ----------------
   function injectNavbar() {
     if (document.getElementById('__navbar__')) return;
