@@ -54,13 +54,17 @@
 
   function onLoad(options) {
     // 优先使用页面参数携带的地址（可直达某个问卷的填写页），否则使用全局配置
-    var target = ''
     if (options && options.url) {
-      target = options.url
-    } else {
-      target = app.globalData.TDUCK_BASE_URL || ''
+      return startWith(options.url)
     }
+    // 全局配置：外网时问卷地址可能来自云端（等 app 的配置加载完成），本机则直接用
+    var wait = app._configPromise || Promise.resolve()
+    wait.then(function () {
+      startWith(app.globalData.TDUCK_BASE_URL || '')
+    })
+  }
 
+  function startWith(target) {
     if (!target) {
       console.error('[问卷] 未配置问卷系统地址，请在 app.js 的 globalData.TDUCK_BASE_URL 中配置')
       setData({ loading: false, serverOk: false, targetUrl: '' })

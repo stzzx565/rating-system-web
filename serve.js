@@ -119,7 +119,9 @@ const server = http.createServer(function (req, res) {
     return proxy(req, res, VIDEO_BACKEND);
   }
   if (p === '/tduck' || p.startsWith('/tduck/')) {
-    req.url = '/tduck' + req.url.slice('/tduck'.length);
+    // 剥掉 /tduck 前缀再转发（外网页面经隧道访问 /tduck/* → 问卷服务的 /*）
+    var rest = req.url.slice('/tduck'.length);
+    req.url = rest === '' ? '/' : rest;
     return proxy(req, res, TDUCK_BACKEND);
   }
   if (p === '/favicon.ico') { res.writeHead(204); res.end(); return; }

@@ -91,10 +91,15 @@ window.App = {
         header: { 'X-Master-Key': self.globalData.JSONBin_API_KEY },
         timeout: 8000,
         success: function (res) {
-          var base = res.data && res.data.record && res.data.record.videoApiBase;
-          if (typeof base === 'string' && base) {
-            self.globalData.VIDEO_API_BASE = base;
-            console.log('视频接口地址(云端):', base);
+          var rec = (res.data && res.data.record) || {};
+          if (typeof rec.videoApiBase === 'string' && rec.videoApiBase) {
+            self.globalData.VIDEO_API_BASE = rec.videoApiBase;
+            console.log('视频接口地址(云端):', rec.videoApiBase);
+          }
+          // TDuck 问卷系统的外网隧道地址（外网启动脚本写入；本机局域网用原地址）
+          if (typeof rec.tduckApiBase === 'string' && rec.tduckApiBase) {
+            self.globalData.TDUCK_BASE_URL = rec.tduckApiBase;
+            console.log('问卷系统地址(云端):', rec.tduckApiBase);
           }
           resolve(self.globalData.VIDEO_API_BASE);
         },

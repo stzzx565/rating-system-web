@@ -14,6 +14,7 @@ const fs = require('fs');
 
 const PORT_WEB = 8081;   // 本地预览（站点+接口代理）
 const PORT_API = 8080;   // 视频解析服务
+const PORT_TDUCK = 8999; // TDuck 问卷系统
 const ROOT = __dirname;
 const TUNNEL_URL_FILE = path.join(ROOT, '外网地址.txt');
 // 云端配置 bin（与 js/app.js 中一致）
@@ -78,13 +79,37 @@ function downloadCloudflared() {
   });
 }
 
-async function putConfig(url) {
+async function putConfig(url, tduckUrl) {
   const res = await fetch(CFG_URL, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'X-Master-Key': CFG_KEY },
-    body: JSON.stringify({ videoApiBase: url, updatedAt: new Date().toISOString() })
+    body: JSON.stringify({
+      videoApiBase: url,
+      tduckApiBase: tduckUrl || '',
+      updatedAt: new Date().toISOString()
+    })
   });
   if (!res.ok) throw new Error('配置写入失败 HTTP ' + res.status);
+}
+
+// 为本地某个端口开一条免费隧道，解析出地址（失败返回 null）
+function openTunnel(cf, port) {
+  return new Promise(resolve => {
+    const child = spawn(cf, ['tunnel', '--url', `http://localhost:${port}`], {
+      cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe']
+    });
+    let done = false;
+    const finish = url => { if (!done) { done = true; resolve({ child, url }); } };
+    const onOut = data => {
+      const m = data.toString().match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/i);
+      if (m) finish(m[0]);
+    };
+    child.stdout.on('data', onOut);
+    child.stderr.on('data', onOut);
+    child.on('exit', () => finish(null));
+    // 60 秒没拿到地址视为失败
+    setTimeout(() => finish(null), 60000);
+  });
 }
 
 (async function main() {
@@ -116,19 +141,30 @@ async function putConfig(url) {
   }
 
   console.log('  正在创建外网隧道...');
-  const child = spawn(cf, ['tunnel', '--url', `http://localhost:${PORT_WEB}`], {
-    cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe']
-  });
+  const mainT = await openTunnel(cf, PORT_WEB);
+  if (!mainT.url) {
+    console.error('  [错误] 主隧道创建失败，请重新运行本脚本');
+    process.exit(1);
+  }
 
-  let found = false;
-  const onOut = data => {
-    const s = data.toString();
-    const m = s.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/i);
-    if (m && !found) { found = true; onUrl(m[0]); }
-  };
-  child.stdout.on('data', onOut);
-  child.stderr.on('data', onOut);
-  child.on('exit', code => {
+  // 问卷系统（TDuck :8999）单独一条隧道；没运行就不开，问卷外网暂不可用
+  let tduckUrl = '';
+  if (await portUp(PORT_TDUCK)) {
+    console.log(`  问卷服务 OK (:${PORT_TDUCK})，正在创建问卷隧道...`);
+    const tT = await openTunnel(cf, PORT_TDUCK);
+    if (tT.url) {
+      tduckUrl = tT.url;
+      tT.child.on('exit', () => console.log('  [提示] 问卷隧道已断开（重启本脚本可恢复，地址会变）'));
+    } else {
+      console.log('  [提示] 问卷隧道创建失败，外网暂无法打开问卷系统');
+    }
+  } else {
+    console.log(`  [提示] 问卷服务(:${PORT_TDUCK})未运行 —— 外网无法打开“电脑版完整问卷系统”。`);
+    console.log('         需要时双击 D:\\TDuck\\启动问卷系统.bat，再重新运行本脚本。');
+  }
+
+  const url = mainT.url;
+  mainT.child.on('exit', code => {
     console.log('');
     console.log(`  [停止] 隧道进程退出(code=${code})，外网访问已断开。重新双击 外网访问.bat 即可恢复（地址可能变化）。`);
     process.exit(0);
@@ -140,18 +176,23 @@ async function putConfig(url) {
     console.log('   外网访问已开启，把下面地址发给任何人即可打开：');
     console.log('');
     console.log('    ' + url);
+    if (tduckUrl) {
+      console.log('');
+      console.log('   问卷系统外网地址：' + tduckUrl);
+    }
     console.log('');
-    console.log('   (视频接口地址已同步到云端，github.io 网页版会自动识别)');
+    console.log('   (视频/问卷接口地址已同步到云端，github.io 网页版会自动识别)');
     console.log('  ============================================');
     console.log('   保持本窗口开启 = 外网持续可用；关闭窗口 = 外网停止');
     console.log('   每次重启后地址会变，重新运行本脚本会打印新地址');
     try {
-      await putConfig(url);
-      fs.writeFileSync(TUNNEL_URL_FILE, url + '\n', 'utf8');
+      await putConfig(url, tduckUrl);
+      fs.writeFileSync(TUNNEL_URL_FILE, url + (tduckUrl ? '\n' + tduckUrl : '') + '\n', 'utf8');
       console.log('   (最新地址也已写入 外网地址.txt)');
     } catch (e) {
       console.warn('   [警告] 地址同步云端失败(github.io 可能连不上视频接口):', e.message);
     }
     console.log('');
   }
+  await onUrl(url);
 })().catch(e => { console.error('失败:', e); process.exit(1); });
