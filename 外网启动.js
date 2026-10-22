@@ -125,12 +125,35 @@ function openTunnel(cf, port) {
   if (!(await portUp(PORT_WEB))) { console.error('  [错误] 预览服务启动失败，请手动运行 本地预览.bat'); process.exit(1); }
   console.log(`  预览服务 OK (:${PORT_WEB})`);
 
-  // 2. 视频解析服务
+  // 2. 视频解析服务（未运行则自动启动，无需再手动双击 bat）
+  if (!(await portUp(PORT_API))) {
+    console.log(`  视频解析服务(:${PORT_API})未运行，正在启动...`);
+    const svcDir = path.join(ROOT, '..', 'video-parser-service');
+    spawn(process.execPath, ['server.js'], { cwd: svcDir, detached: true, stdio: 'ignore' }).unref();
+    for (let i = 0; i < 40; i++) { await new Promise(r => setTimeout(r, 500)); if (await portUp(PORT_API)) break; }
+  }
   if (await portUp(PORT_API)) {
     console.log(`  视频解析服务 OK (:${PORT_API})`);
   } else {
-    console.log(`  [提示] 视频解析服务(:${PORT_API})未运行 —— 外网暂时无法解析视频，评分/问卷不受影响。`);
-    console.log('         要用视频功能请双击原项目里的 视频解析服务.bat，再重新运行本脚本。');
+    console.error('  [错误] 视频解析服务启动失败（外网将无法解析视频），请检查 video-parser-service 目录');
+    process.exit(1);
+  }
+
+  // 3. TDuck 问卷系统（未运行则自动启动 MySQL + 服务）
+  if (!(await portUp(PORT_TDUCK))) {
+    console.log('  问卷服务(:8999)未运行，正在启动（约30秒）...');
+    const TD = path.join(ROOT, '..', 'TDuck');
+    if (!(await portUp(3306))) {
+      spawn(path.join(TD, 'mysql', 'bin', 'mysqld.exe'),
+        ['--no-defaults', '--console', `--basedir=${path.join(TD, 'mysql')}`,
+         `--datadir=${path.join(TD, 'mysql', 'data')}`, '--port=3306', '--bind-address=127.0.0.1'],
+        { cwd: TD, detached: true, stdio: 'ignore' }).unref();
+      for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 1000)); if (await portUp(3306)) break; }
+    }
+    spawn(path.join(TD, 'jre', 'bin', 'java.exe'),
+      ['-Dfile.encoding=utf-8', '-jar', path.join(TD, 'tduck-api.jar')],
+      { cwd: TD, detached: true, stdio: 'ignore' }).unref();
+    for (let i = 0; i < 90; i++) { await new Promise(r => setTimeout(r, 1000)); if (await portUp(PORT_TDUCK)) break; }
   }
 
   // 3. cloudflared
@@ -163,12 +186,16 @@ function openTunnel(cf, port) {
     console.log('         需要时双击 D:\\TDuck\\启动问卷系统.bat，再重新运行本脚本。');
   }
 
-  const url = mainT.url;
-  mainT.child.on('exit', code => {
+  // 隧道断开（重启/网络波动）→ 自动重建并同步新地址，无需人工干预
+  async function restartTunnel() {
     console.log('');
-    console.log(`  [停止] 隧道进程退出(code=${code})，外网访问已断开。重新双击 外网访问.bat 即可恢复（地址可能变化）。`);
-    process.exit(0);
-  });
+    console.log('  [提示] 主隧道已断开，正在自动重建（外网地址会变化）…');
+    const t = await openTunnel(cf, PORT_WEB);
+    if (!t.url) { console.error('  [警告] 重建失败，5 秒后重试…'); setTimeout(restartTunnel, 5000); return; }
+    t.child.on('exit', () => restartTunnel());
+    await onUrl(t.url);
+  }
+  mainT.child.on('exit', () => restartTunnel());
 
   async function onUrl(url) {
     console.log('');
@@ -194,5 +221,5 @@ function openTunnel(cf, port) {
     }
     console.log('');
   }
-  await onUrl(url);
+  await onUrl(mainT.url);
 })().catch(e => { console.error('失败:', e); process.exit(1); });
