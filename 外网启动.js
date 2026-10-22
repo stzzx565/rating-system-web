@@ -118,15 +118,33 @@ async function syncConfigToPages(url, tduckUrl) {
   const git = findGit();
   const opts = { cwd: ROOT, stdio: 'pipe', timeout: 90000, windowsHide: true, encoding: 'utf8' };
   const run = args => execFileSync(git, args, opts);
-  if (changed) {
-    run(['add', 'config.json']);
-    run(['-c', 'user.name=stzzx565', '-c', 'user.email=stzzx565@users.noreply.github.com',
-      'commit', '-m', 'chore: sync tunnel config']);
+  try {
+    if (changed) {
+      run(['add', 'config.json']);
+      run(['-c', 'user.name=stzzx565', '-c', 'user.email=stzzx565@users.noreply.github.com',
+        'commit', '-m', 'chore: sync tunnel config']);
+    }
+    // 即使内容没变也尝试推送（补推上次网络不通没推成功的提交）
+    run(['pull', '--rebase', 'origin', 'master']);
+    run(['push', 'origin', 'master']);
+    return 'ok';
+  } catch (gitErr) {
+    // github.com 直连不稳时改走 api.github.com（gh CLI）通道，推送同一份内容
+    try {
+      const gh = 'C:\\Program Files\\GitHub CLI\\gh.exe';
+      if (!fs.existsSync(gh)) throw gitErr;
+      const ghOpts = { stdio: 'pipe', timeout: 90000, windowsHide: true, encoding: 'utf8' };
+      const apiPath = '/repos/stzzx565/rating-system-web/contents/config.json';
+      const b64 = fs.readFileSync(file).toString('base64');
+      let sha = '';
+      try { sha = execFileSync(gh, ['api', apiPath, '--jq', '.sha'], ghOpts).trim(); } catch (e) { /* 404=远端尚无此文件 */ }
+      const ag = ['api', '-X', 'PUT', apiPath,
+        '-f', 'message=chore: sync tunnel config', '-f', 'content=' + b64];
+      if (sha) ag.push('-f', 'sha=' + sha);
+      execFileSync(gh, ag, ghOpts);
+      return 'api';
+    } catch (e2) { throw gitErr; }
   }
-  // 即使内容没变也尝试推送（补推上次网络不通没推成功的提交）
-  run(['pull', '--rebase', 'origin', 'master']);
-  run(['push', 'origin', 'master']);
-  return 'ok';
 }
 
 // 为本地某个端口开一条免费隧道，解析出地址（失败返回 null）
