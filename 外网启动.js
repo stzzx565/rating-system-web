@@ -7,7 +7,7 @@
  *   4. 把隧道地址写入 JSONBin 云端配置 bin（github.io 网页版自动识别）
  *   5. 打印可分享的外网地址，窗口保持开启即外网在线
  */
-const { spawn, execSync } = require('child_process');
+const { spawn, execSync, execFileSync } = require('child_process');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
@@ -90,6 +90,43 @@ async function putConfig(url, tduckUrl) {
     })
   });
   if (!res.ok) throw new Error('配置写入失败 HTTP ' + res.status);
+}
+
+// 备用配置：把隧道地址写入仓库里的 config.json 并推送到 GitHub Pages
+// （github.io 托管，无请求额度限制；网页版在 JSONBin 读不到时会读这里）
+function findGit() {
+  const win = 'C:\\Program Files\\Git\\cmd\\git.exe';
+  try { if (fs.existsSync(win)) return win; } catch (e) { /* 忽略 */ }
+  return 'git';
+}
+
+async function syncConfigToPages(url, tduckUrl) {
+  const file = path.join(ROOT, 'config.json');
+  const target = { v: url, t: tduckUrl || '' };
+  const parse = s => { try { const j = JSON.parse(s); return { v: j.videoApiBase, t: j.tduckApiBase || '' }; } catch (e) { return null; } };
+  let old = '';
+  try { old = fs.readFileSync(file, 'utf8'); } catch (e) { /* 文件不存在 */ }
+  const cur = parse(old);
+  const changed = !cur || cur.v !== target.v || cur.t !== target.t;
+  if (changed) {
+    fs.writeFileSync(file, JSON.stringify({
+      videoApiBase: target.v,
+      tduckApiBase: target.t,
+      updatedAt: new Date().toISOString()
+    }, null, 2) + '\n', 'utf8');
+  }
+  const git = findGit();
+  const opts = { cwd: ROOT, stdio: 'pipe', timeout: 90000, windowsHide: true, encoding: 'utf8' };
+  const run = args => execFileSync(git, args, opts);
+  if (changed) {
+    run(['add', 'config.json']);
+    run(['-c', 'user.name=stzzx565', '-c', 'user.email=stzzx565@users.noreply.github.com',
+      'commit', '-m', 'chore: sync tunnel config']);
+  }
+  // 即使内容没变也尝试推送（补推上次网络不通没推成功的提交）
+  run(['pull', '--rebase', 'origin', 'master']);
+  run(['push', 'origin', 'master']);
+  return 'ok';
 }
 
 // 为本地某个端口开一条免费隧道，解析出地址（失败返回 null）
@@ -212,12 +249,24 @@ function openTunnel(cf, port) {
     console.log('  ============================================');
     console.log('   保持本窗口开启 = 外网持续可用；关闭窗口 = 外网停止');
     console.log('   每次重启后地址会变，重新运行本脚本会打印新地址');
+    // 三个同步互相独立：一个失败不影响其它两个
     try {
       await putConfig(url, tduckUrl);
+      console.log('   (最新地址已同步 JSONBin 云端配置)');
+    } catch (e) {
+      console.warn('   [警告] JSONBin 配置同步失败:', e.message);
+    }
+    try {
+      await syncConfigToPages(url, tduckUrl);
+      console.log('   (最新地址已同步 github.io/config.json 备用配置)');
+    } catch (e) {
+      console.warn('   [提示] github.io 备用配置同步未完成(不影响主配置):', String(e.message || e).split('\n')[0]);
+    }
+    try {
       fs.writeFileSync(TUNNEL_URL_FILE, url + (tduckUrl ? '\n' + tduckUrl : '') + '\n', 'utf8');
       console.log('   (最新地址也已写入 外网地址.txt)');
     } catch (e) {
-      console.warn('   [警告] 地址同步云端失败(github.io 可能连不上视频接口):', e.message);
+      console.warn('   [提示] 外网地址.txt 写入失败:', e.message);
     }
     console.log('');
   }
