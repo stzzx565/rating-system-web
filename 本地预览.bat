@@ -7,7 +7,7 @@ echo   评分系统 - 网页版本地预览
 echo   保持本窗口开启，关闭即停止服务
 echo ============================================
 if not exist "serve.js" (
-  echo [错误] 未找到 serve.js，请确认在 1.15-2 目录下运行
+  echo [错误] 未找到 serve.js，请确认在 web 目录下运行
   pause
   exit /b 1
 )
