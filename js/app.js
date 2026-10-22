@@ -33,6 +33,9 @@ window.App = {
     // 视频接口地址的“云端配置” bin（外网启动脚本每次开隧道会把最新隧道地址写进来）
     JSONBIN_CONFIG_BIN_ID: '6ad5f513ffd5d16053782d28',
     JSONBIN_CONFIG_URL: 'https://api.jsonbin.io/v3/b/6ad5f513ffd5d16053782d28',
+    // 备用配置源：github.io 托管的 config.json（无请求额度限制，
+    // JSONBin 免费额度用尽时自动切换到这里，外网启动脚本会同步更新）
+    PAGES_CONFIG_URL: 'https://stzzx565.github.io/rating-system-web/config.json',
 
     // 视频解析后端 API 地址
     // - '' 表示走本页同源 /api 与 /proxy 路径（本地/局域网预览由 serve.js 自动代理到 127.0.0.1:8080 的解析服务）
@@ -85,6 +88,42 @@ window.App = {
       return self._configPromise;
     }
     self._configPromise = new Promise(function (resolve) {
+      var done = function () { resolve(self.globalData.VIDEO_API_BASE); };
+      // 应用一份配置（命中返回 true）
+      var applyRec = function (rec) {
+        var hit = false;
+        if (typeof rec.videoApiBase === 'string' && rec.videoApiBase) {
+          self.globalData.VIDEO_API_BASE = rec.videoApiBase;
+          console.log('视频接口地址(云端):', rec.videoApiBase);
+          hit = true;
+        }
+        // TDuck 问卷系统的外网隧道地址（外网启动脚本写入；本机局域网用原地址）
+        if (typeof rec.tduckApiBase === 'string' && rec.tduckApiBase) {
+          self.globalData.TDUCK_BASE_URL = rec.tduckApiBase;
+          console.log('问卷系统地址(云端):', rec.tduckApiBase);
+          hit = true;
+        }
+        return hit;
+      };
+      // 备用源：github.io 托管的 config.json（无额度限制，JSONBin 读取失败/额度用尽时自动切换）
+      var loadPagesConfig = function () {
+        wx.request({
+          url: self.globalData.PAGES_CONFIG_URL + '?t=' + Date.now(),
+          method: 'GET',
+          timeout: 8000,
+          success: function (res) {
+            if (!applyRec(res.data || {})) {
+              console.warn('github.io 云端配置为空，使用默认配置');
+            }
+            done();
+          },
+          fail: function () {
+            console.warn('读取 github.io 云端配置失败，使用默认配置');
+            done();
+          }
+        });
+      };
+      // 首选源：JSONBin 配置 bin（现状不变），读不到数据时自动换备用源
       wx.request({
         url: self.globalData.JSONBIN_CONFIG_URL,
         method: 'GET',
@@ -92,20 +131,12 @@ window.App = {
         timeout: 8000,
         success: function (res) {
           var rec = (res.data && res.data.record) || {};
-          if (typeof rec.videoApiBase === 'string' && rec.videoApiBase) {
-            self.globalData.VIDEO_API_BASE = rec.videoApiBase;
-            console.log('视频接口地址(云端):', rec.videoApiBase);
-          }
-          // TDuck 问卷系统的外网隧道地址（外网启动脚本写入；本机局域网用原地址）
-          if (typeof rec.tduckApiBase === 'string' && rec.tduckApiBase) {
-            self.globalData.TDUCK_BASE_URL = rec.tduckApiBase;
-            console.log('问卷系统地址(云端):', rec.tduckApiBase);
-          }
-          resolve(self.globalData.VIDEO_API_BASE);
+          if (applyRec(rec)) done();
+          else loadPagesConfig();
         },
         fail: function () {
-          console.warn('读取视频接口云端配置失败');
-          resolve(self.globalData.VIDEO_API_BASE);
+          console.warn('读取视频接口云端配置失败，尝试 github.io 备用配置');
+          loadPagesConfig();
         }
       });
     });
