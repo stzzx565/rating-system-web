@@ -78,27 +78,27 @@
     });
   }
 
-  // 需要走后端代理的 CDN（直链下载会因 Referer/防盗链失败）
+  // 防盗链严格、必须走后端代理的 CDN（直链必被拒）
   function needsProxy(u) {
-    return /douyinvod\.com|douyinpic\.com|douyin\.com|bilibili\.com|bilivideo\.com|hdslb\.com|zjcdn\.com|kwaicdn\.com|p2uweb\.com|xhscdn\.com|xiaohongshu\.com|tiktokv\.com|tiktokcdn/.test(u);
+    return /douyinvod\.com|douyinpic\.com|douyin\.com|tiktokv\.com|tiktokcdn/.test(u);
   }
 
-  // 下载媒体文件到临时路径：优先后端代理（自带 Referer），失败回退直链
+  // 下载媒体到临时路径。
+  // 速度优化:非防盗链域名直连优先(浏览器直连 CDN,完全不占隧道,实测快 4~5 倍),
+  // 失败(防盗链/CORS/网络)自动回退后端代理;douyin 等严格防盗链域名仍代理优先。
   async function fetchMedia(directUrl) {
     var base = await readyBase();
-    if (needsProxy(directUrl)) {
+    var proxiedUrl = base + '/proxy?url=' + encodeURIComponent(directUrl);
+    var order = needsProxy(directUrl) ? [proxiedUrl, directUrl] : [directUrl, proxiedUrl];
+    var lastErr;
+    for (var i = 0; i < order.length; i++) {
       try {
-        const proxied = base + '/proxy?url=' + encodeURIComponent(directUrl);
-        return await doDownload(proxied);
-      } catch (proxyErr) {
-        // 回退直链
+        return await doDownload(order[i]);
+      } catch (e) {
+        lastErr = e;
       }
     }
-    try {
-      return await doDownload(directUrl);
-    } catch (directErr) {
-      throw new Error('保存失败:' + (directErr.message || '').slice(0, 150));
-    }
+    throw new Error('保存失败:' + ((lastErr && lastErr.message) || '').slice(0, 150));
   }
 
   // 下载视频：网页版 = 触发浏览器下载（微信内可直接长按页面视频保存相册）
