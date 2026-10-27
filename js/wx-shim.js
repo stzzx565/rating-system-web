@@ -116,24 +116,86 @@
   // ---------- 下载文件到"相册/文件" ----------
   // tempFilePath 为 objectURL，记下 blob 以便保存时取回
   var tempFiles = {};
+
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  // 流式下载 + 断点续传:长视频经隧道传输时间长,网络抖动时带 Range 从断点继续,
+  // 不再一断就整份作废重来(最多重试 8 次,指数退避)
   function downloadFile(opt) {
-    fetch(opt.url).then(function (r) {
-      if (r.status === 200 || r.status === 206) {
-        return r.blob().then(function (blob) {
-          var u = URL.createObjectURL(blob);
-          tempFiles[u] = blob;
-          if (opt.success) opt.success({ statusCode: r.status, tempFilePath: u, blob: blob });
-          if (opt.complete) opt.complete({ statusCode: r.status, tempFilePath: u });
+    var url = opt.url;
+    var chunks = [];
+    var got = 0;
+    var retries = 0;
+    var maxRetries = 8;
+
+    function failWith(e) {
+      if (opt.fail) opt.fail(e);
+      if (opt.complete) opt.complete(e);
+    }
+    function succeed(status, blob) {
+      var u = URL.createObjectURL(blob);
+      tempFiles[u] = blob;
+      if (opt.success) opt.success({ statusCode: status, tempFilePath: u, blob: blob });
+      if (opt.complete) opt.complete({ statusCode: status, tempFilePath: u });
+    }
+
+    function fetchSegment() {
+      var headers = {};
+      if (got > 0) headers['Range'] = 'bytes=' + got + '-';
+      fetch(url, { headers: headers }).then(function (r) {
+        if (r.status !== 200 && r.status !== 206) {
+          failWith({ statusCode: r.status, errMsg: 'downloadFile:fail HTTP ' + r.status });
+          return;
+        }
+        // 上游不支持续传(已收过数据却回 200)→ 丢弃旧数据从头收
+        if (r.status === 200 && got > 0) { chunks = []; got = 0; }
+
+        // 流式读取,已收数据保留在 chunks 中供续传复用
+        if (!r.body || typeof r.body.getReader !== 'function') {
+          return r.blob().then(function (blob) { succeed(r.status, blob); });
+        }
+        var reader = r.body.getReader();
+        function pump() {
+          return reader.read().then(function (res) {
+            if (res.done) return;
+            chunks.push(res.value);
+            got += res.value.length;
+            if (opt.progress) { try { opt.progress(got); } catch (e) {} }
+            return pump();
+          });
+        }
+        return pump().then(function () {
+          // 校验完整性:按 content-range/content-length 算出应有总长
+          var total = 0;
+          var cr = r.headers.get('content-range');
+          var m = cr && /\/(\d+)\s*$/.exec(cr);
+          if (m) total = parseInt(m[1], 10);
+          if (!total && r.status === 200) {
+            // 仅整份响应(200)时 content-length 才是总长;206 的只是本段长度
+            var cl = r.headers.get('content-length');
+            if (cl) total = parseInt(cl, 10);
+          }
+          if (total && got < total) {
+            if (retries < maxRetries) {
+              retries++;
+              return sleep(Math.min(500 * retries, 4000)).then(fetchSegment);
+            }
+            failWith({ errMsg: 'downloadFile:fail 传输中断(已收 ' + got + '/' + total + ' 字节)' });
+            return;
+          }
+          succeed(r.status, new Blob(chunks));
         });
-      }
-      var e = { statusCode: r.status, errMsg: 'downloadFile:fail HTTP ' + r.status };
-      if (opt.fail) opt.fail(e);
-      if (opt.complete) opt.complete(e);
-    }).catch(function (err) {
-      var e = { errMsg: 'downloadFile:fail ' + (err && err.message || '网络错误') };
-      if (opt.fail) opt.fail(e);
-      if (opt.complete) opt.complete(e);
-    });
+      }).catch(function (err) {
+        // 网络断开/隧道抖动 → 从断点续传重试
+        if (retries < maxRetries) {
+          retries++;
+          return sleep(Math.min(500 * retries, 4000)).then(fetchSegment);
+        }
+        failWith({ errMsg: 'downloadFile:fail ' + ((err && err.message) || '网络错误') +
+                   (got > 0 ? '(已收 ' + got + ' 字节仍失败)' : '') });
+      });
+    }
+    fetchSegment();
     return { abort: function () {} };
   }
 
