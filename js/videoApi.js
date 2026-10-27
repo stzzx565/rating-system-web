@@ -80,7 +80,7 @@
 
   // 需要走后端代理的 CDN（直链下载会因 Referer/防盗链失败）
   function needsProxy(u) {
-    return /douyinvod\.com|douyinpic\.com|douyin\.com|bilibili\.com|hdslb\.com|zjcdn\.com/.test(u);
+    return /douyinvod\.com|douyinpic\.com|douyin\.com|bilibili\.com|bilivideo\.com|hdslb\.com|zjcdn\.com|kwaicdn\.com|p2uweb\.com|xhscdn\.com|xiaohongshu\.com|tiktokv\.com|tiktokcdn/.test(u);
   }
 
   // 下载媒体文件到临时路径：优先后端代理（自带 Referer），失败回退直链
