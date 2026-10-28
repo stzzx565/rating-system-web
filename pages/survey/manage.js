@@ -147,7 +147,10 @@
   }
 
   function onShow() {
-    if (data.verified) renderList()
+    // 冷启动直开本页时 globalData 可能尚未完成云端同步，先拉取再渲染，避免列表显示为空
+    if (data.verified) {
+      app.loadData().then(function () { renderList() })
+    }
   }
 
   // ========== 管理员验证 ==========
@@ -161,7 +164,8 @@
     if (data.passwordInput === adminPassword) {
       setData({ verified: true, passwordInput: '' })
       wx.setStorageSync('surveyAdminVerified', true)
-      renderList()
+      // 验证通过后先等云端数据到位再渲染列表
+      app.loadData().then(function () { renderList() })
     } else {
       wx.showToast({ title: '密码错误', icon: 'none' })
     }
