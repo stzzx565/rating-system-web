@@ -53,12 +53,15 @@
   // 隧道重启后 start_tunnel.js 会自动更新该配置，入口始终指向当前有效地址
   function openAgent(ev) {
     if (ev) { ev.preventDefault(); }
+    // 统一强制 https（隧道地址两种协议都通，但 http 会触发浏览器"非私密连接"警告）
+    function toHttps(u) { return u.replace(/^http:\/\//i, 'https://'); }
     var base = '';
     try {
       var app = window.getApp && getApp();
-      base = ((app && app.globalData && app.globalData.videoApiBase) || '').replace(/\/+$/, '');
+      var gd = (app && app.globalData) || {};
+      base = ((gd.VIDEO_API_BASE || gd.videoApiBase) || '').replace(/\/+$/, '');
     } catch (e) {}
-    if (base) { window.open(base + '/agnes', '_blank'); return; }
+    if (base) { window.open(toHttps(base) + '/agnes', '_blank'); return; }
     // 本机/局域网预览：直连本机后端 8080（需已运行"启动后端.bat"）
     var host = location.hostname;
     if (!host || host === 'localhost' || host === '127.0.0.1' || host.indexOf('192.168.') === 0) {
@@ -74,7 +77,7 @@
         .then(function (r) { return r.json(); })
         .then(function (j) {
           var b = (((j || {}).record || {}).videoApiBase || '').replace(/\/+$/, '');
-          if (b) window.open(b + '/agnes', '_blank');
+          if (b) window.open(toHttps(b) + '/agnes', '_blank');
           else toast('云端未找到智能体地址');
         })
         .catch(function () { toast('获取智能体地址失败，请重试'); });
