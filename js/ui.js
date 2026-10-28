@@ -22,7 +22,7 @@
   function injectNavbar() {
     if (document.getElementById('__navbar__')) return;
     var cfg = (typeof window.__NAVBAR__ === 'object' && window.__NAVBAR__) || {};
-    var title = cfg.title || document.title.replace(/\s*[-|·].*$/, '') || '评分系统';
+    var title = cfg.title || document.title.replace(/\s*[-|·].*$/, '') || '哈哥智慧平台';
     var isTab = typeof window.__TABBAR__ === 'string';
     var showBack = cfg.back !== undefined ? !!cfg.back : !isTab;
 
