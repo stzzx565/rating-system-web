@@ -49,10 +49,43 @@
   }
 
   // ---------------- 底部 tabBar（对应 app.json tabBar 配置） ----------------
+  // 打开 AI 智能体：地址取云端最新隧道配置(app.js 页面加载时已拉取)，
+  // 隧道重启后 start_tunnel.js 会自动更新该配置，入口始终指向当前有效地址
+  function openAgent(ev) {
+    if (ev) { ev.preventDefault(); }
+    var base = '';
+    try {
+      var app = window.getApp && getApp();
+      base = ((app && app.globalData && app.globalData.videoApiBase) || '').replace(/\/+$/, '');
+    } catch (e) {}
+    if (base) { window.open(base + '/agnes', '_blank'); return; }
+    // 本机/局域网预览：直连本机后端 8080（需已运行"启动后端.bat"）
+    var host = location.hostname;
+    if (!host || host === 'localhost' || host === '127.0.0.1' || host.indexOf('192.168.') === 0) {
+      window.open(location.protocol + '//' + host + ':8080/agnes', '_blank');
+      return;
+    }
+    // 云端配置尚未加载完成：现场拉一次
+    toast('正在获取智能体地址…');
+    try {
+      var g = (window.getApp && getApp() && getApp().globalData) || {};
+      if (!g.JSONBIN_CONFIG_URL || !g.JSONBin_API_KEY) { toast('智能体地址未配置'); return; }
+      fetch(g.JSONBIN_CONFIG_URL, { headers: { 'X-Master-Key': g.JSONBin_API_KEY } })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          var b = (((j || {}).record || {}).videoApiBase || '').replace(/\/+$/, '');
+          if (b) window.open(b + '/agnes', '_blank');
+          else toast('云端未找到智能体地址');
+        })
+        .catch(function () { toast('获取智能体地址失败，请重试'); });
+    } catch (e2) { toast('获取智能体地址失败'); }
+  }
+
   var TABS = [
     { key: 'index',  text: '首页', icon: '&#127968;', page: 'pages/index/index' },
     { key: 'admin',  text: '管理', icon: '&#9881;',    page: 'pages/admin/admin' },
-    { key: 'mobile', text: '评分', icon: '&#11088;',   page: 'pages/mobile/mobile' }
+    { key: 'mobile', text: '评分', icon: '&#11088;',   page: 'pages/mobile/mobile' },
+    { key: 'agent',  text: '智能体', icon: '&#129302;', action: openAgent }
   ];
   function injectTabbar() {
     var cur = window.__TABBAR__;
@@ -65,7 +98,8 @@
       'padding-bottom:env(safe-area-inset-bottom,0);';
     TABS.forEach(function (tb) {
       var a = document.createElement('a');
-      a.href = ROOT + tb.page + '.html';
+      a.href = tb.action ? 'javascript:void(0)' : ROOT + tb.page + '.html';
+      if (tb.action) a.onclick = tb.action;
       var active = tb.key === cur;
       a.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;' +
         'text-decoration:none;font-size:11px;gap:2px;color:' + (active ? '#667eea' : '#7f8c8d') + ';font-weight:' + (active ? 600 : 400) + ';';
